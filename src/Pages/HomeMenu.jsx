@@ -32,7 +32,7 @@ export default function HomeMenu() {
 
     return (
         <div className="p-3 text-slate-100">
-            <div className="text-[12px] opacity-80 mb-2">Use ▲▼, OK, or press 1–4</div>
+            <div className="text-[12px] opacity-80 mb-2">Press 1–4</div>
 
             <div className="rounded-xl border border-slate-700 overflow-hidden">
                 {ITEMS.map((it, i) => (
