@@ -6,6 +6,8 @@ import RootLayouts from "../Layouts/RootLayouts";
 import HomeMenu from "../Pages/HomeMenu";
 import Holder from "../Pages/Holder";
 import Wallet from "../Pages/Wallet";
+import Issuer from "../Pages/Issuer";
+import Verifier from "../Pages/Verifier";
 
 function Placeholder({ name }) {
     return (
@@ -23,8 +25,8 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <HomeMenu /> },
             { path: "holder", element: <Holder /> },
-            { path: "issuer", element: <Placeholder name="Issuer (simulation)" /> },
-            { path: "verifier", element: <Placeholder name="Verifier (simulation)" /> },
+            { path: "issuer", element: <Issuer></Issuer> },
+            { path: "verifier", element: <Verifier></Verifier> },
             { path: "wallet", element: <Wallet /> },
         ],
     },
