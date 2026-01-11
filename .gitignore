@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 .env
-simulation.txt
 
 # Editor directories and files
 .vscode/*
