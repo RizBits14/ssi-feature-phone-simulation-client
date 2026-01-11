@@ -4,6 +4,12 @@
 
 This simulaction demonstrates the Self-Sovereign Identity (SSI) Trust Triangle between Issuer, Holder, and Verifier using a phone-based UI.
 
+# Environment Configuration:
+
+**Required Variables**
+
+- VITE_API_BASE
+
 # Step By Step Simulation
 
 ## 1) (Issuer → Creates Invitation)
