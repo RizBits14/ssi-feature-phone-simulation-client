@@ -1,9 +1,35 @@
+// Keypad.jsx
 import React, { useEffect } from "react";
 import { usePhone } from "../Phone/PhoneContext";
 
+function isEditable(el) {
+    if (!el || typeof el !== "object") return false;
+    const tag = el.tagName;
+    if (tag === "TEXTAREA") return !el.readOnly && !el.disabled;
+    if (tag === "INPUT") {
+        const type = String(el.getAttribute?.("type") || "text").toLowerCase();
+        const ok =
+            type === "text" ||
+            type === "tel" ||
+            type === "search" ||
+            type === "password" ||
+            type === "email" ||
+            type === "url" ||
+            type === "number" ||
+            type === "" ||
+            type == null;
+        return ok && !el.readOnly && !el.disabled;
+    }
+    return !!el.isContentEditable;
+}
+
 function Key({ label, sub, onClick, className = "" }) {
+    const prevent = (e) => e.preventDefault();
     return (
         <button
+            type="button"
+            onPointerDown={prevent}
+            onMouseDown={prevent}
             onClick={onClick}
             className={
                 "select-none rounded-xl border border-slate-700 bg-slate-900/60 active:bg-slate-800 " +
@@ -13,16 +39,18 @@ function Key({ label, sub, onClick, className = "" }) {
             }
         >
             <div className="text-[17px] font-bold leading-none">{label}</div>
-            {sub ? (
-                <div className="text-[10px] opacity-70 leading-none mt-1">{sub}</div>
-            ) : null}
+            {sub ? <div className="text-[10px] opacity-70 leading-none mt-1">{sub}</div> : null}
         </button>
     );
 }
 
 function MiniKey({ label, onClick, className = "" }) {
+    const prevent = (e) => e.preventDefault();
     return (
         <button
+            type="button"
+            onPointerDown={prevent}
+            onMouseDown={prevent}
             onClick={onClick}
             className={
                 "select-none rounded-xl border border-slate-700 bg-slate-900/50 active:bg-slate-800 " +
@@ -38,8 +66,12 @@ function MiniKey({ label, onClick, className = "" }) {
 }
 
 function NavKey({ label, onClick, className = "" }) {
+    const prevent = (e) => e.preventDefault();
     return (
         <button
+            type="button"
+            onPointerDown={prevent}
+            onMouseDown={prevent}
             onClick={onClick}
             className={
                 "select-none rounded-lg border border-slate-600 bg-slate-900/40 active:bg-slate-800/60 " +
@@ -62,13 +94,29 @@ export default function Keypad() {
     useEffect(() => {
         const onKeyDown = (e) => {
             const k = e.key;
+            const editing = isEditable(document.activeElement);
 
-            if (k === "ArrowUp") return fire("onUp");
-            if (k === "ArrowDown") return fire("onDown");
-            if (k === "ArrowLeft") return fire("onLeft");
-            if (k === "ArrowRight") return fire("onRight");
+            if (k === "ArrowUp") {
+                e.preventDefault();
+                return fire("onUp");
+            }
+            if (k === "ArrowDown") {
+                e.preventDefault();
+                return fire("onDown");
+            }
+            if (k === "ArrowLeft") {
+                e.preventDefault();
+                return fire("onLeft");
+            }
+            if (k === "ArrowRight") {
+                e.preventDefault();
+                return fire("onRight");
+            }
 
-            if (k === "Enter") return fire("onOk");
+            if (k === "Enter") {
+                e.preventDefault();
+                return fire("onOk");
+            }
 
             if (k === "Backspace") {
                 e.preventDefault();
@@ -80,11 +128,16 @@ export default function Keypad() {
                 return fire("onBackspace");
             }
 
-            if (k === "Escape") return fire("onBack");
+            if (k === "Escape") {
+                e.preventDefault();
+                return fire("onBack");
+            }
 
-            if (/^[0-9]$/.test(k)) return fire("onDigit", k);
-            if (k === "*") return fire("onStar");
-            if (k === "#") return fire("onHash");
+            if (!editing) {
+                if (/^[0-9]$/.test(k)) return fire("onDigit", k);
+                if (k === "*") return fire("onStar");
+                if (k === "#") return fire("onHash");
+            }
         };
 
         window.addEventListener("keydown", onKeyDown);
@@ -107,11 +160,7 @@ export default function Keypad() {
                         <NavKey label="▲" onClick={() => fire("onUp")} />
                         <div />
                         <NavKey label="◀" onClick={() => fire("onLeft")} />
-                        <NavKey
-                            label="OK"
-                            onClick={() => fire("onOk")}
-                            className="border-slate-500 bg-slate-800/60"
-                        />
+                        <NavKey label="OK" onClick={() => fire("onOk")} className="border-slate-500 bg-slate-800/60" />
                         <NavKey label="▶" onClick={() => fire("onRight")} />
                         <div />
                         <NavKey label="▼" onClick={() => fire("onDown")} />
@@ -153,4 +202,3 @@ export default function Keypad() {
         </div>
     );
 }
-

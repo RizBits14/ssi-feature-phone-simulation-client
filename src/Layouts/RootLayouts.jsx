@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+// rootlayout.jsx
+import React, { useEffect, useMemo, useRef } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Navbar from "../Components/Navbar";
 import SoftKeys from "../Components/Softkeys";
@@ -6,14 +7,133 @@ import Keypad from "../Components/Keypad";
 import UssdGate from "../Components/UssdGate";
 import { PhoneProvider, usePhone } from "../Phone/PhoneContext";
 
+function isEditable(el) {
+    if (!el || typeof el !== "object") return false;
+    const tag = el.tagName;
+    if (tag === "TEXTAREA") return !el.readOnly && !el.disabled;
+    if (tag === "INPUT") {
+        const type = String(el.getAttribute?.("type") || "text").toLowerCase();
+        const ok =
+            type === "text" ||
+            type === "tel" ||
+            type === "search" ||
+            type === "password" ||
+            type === "email" ||
+            type === "url" ||
+            type === "number" ||
+            type === "";
+        return ok && !el.readOnly && !el.disabled;
+    }
+    return !!el.isContentEditable;
+}
+
+function focusNoScroll(el) {
+    if (!el || typeof el.focus !== "function") return;
+    try {
+        el.focus({ preventScroll: true });
+    } catch {
+        el.focus();
+    }
+}
+
 function Shell() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { setHandlers, setSoftKeys, fire } = usePhone();
+    const { setGlobalHandlers, setSoftKeys, fire } = usePhone();
     const scrollRef = useRef(null);
+    const lastFieldRef = useRef(null);
 
     useEffect(() => {
-        setHandlers({
+        const onFocusIn = (e) => {
+            const el = e.target;
+            if (isEditable(el)) lastFieldRef.current = el;
+        };
+        window.addEventListener("focusin", onFocusIn, true);
+        return () => window.removeEventListener("focusin", onFocusIn, true);
+    }, []);
+
+    const getTarget = useMemo(() => {
+        return () => {
+            const active = document.activeElement;
+            if (isEditable(active)) return active;
+            const last = lastFieldRef.current;
+            if (last && last.isConnected && isEditable(last)) return last;
+            return null;
+        };
+    }, []);
+
+    const dispatchInput = useMemo(() => {
+        return (el) => {
+            try {
+                el.dispatchEvent(new Event("input", { bubbles: true }));
+            } catch {
+                el.dispatchEvent(new Event("input"));
+            }
+        };
+    }, []);
+
+    const setValue = useMemo(() => {
+        return (el, nextValue, caret) => {
+            if (!el) return;
+            el.value = nextValue;
+            if (typeof el.setSelectionRange === "function" && typeof caret === "number") {
+                el.setSelectionRange(caret, caret);
+            }
+            dispatchInput(el);
+            focusNoScroll(el);
+        };
+    }, [dispatchInput]);
+
+    const insertText = useMemo(() => {
+        return (text) => {
+            const el = getTarget();
+            if (!el || typeof el.value !== "string") return;
+
+            const v = el.value;
+            const start = typeof el.selectionStart === "number" ? el.selectionStart : v.length;
+            const end = typeof el.selectionEnd === "number" ? el.selectionEnd : start;
+
+            const t = String(text ?? "");
+            if (!t) return;
+
+            const next = v.slice(0, start) + t + v.slice(end);
+            const caret = start + t.length;
+            setValue(el, next, caret);
+        };
+    }, [getTarget, setValue]);
+
+    const backspace = useMemo(() => {
+        return () => {
+            const el = getTarget();
+            if (!el || typeof el.value !== "string") return;
+
+            const v = el.value;
+            const start = typeof el.selectionStart === "number" ? el.selectionStart : v.length;
+            const end = typeof el.selectionEnd === "number" ? el.selectionEnd : start;
+
+            if (start !== end) {
+                const next = v.slice(0, start) + v.slice(end);
+                setValue(el, next, start);
+                return;
+            }
+
+            if (start <= 0) return;
+
+            const next = v.slice(0, start - 1) + v.slice(start);
+            setValue(el, next, start - 1);
+        };
+    }, [getTarget, setValue]);
+
+    const clearAll = useMemo(() => {
+        return () => {
+            const el = getTarget();
+            if (!el || typeof el.value !== "string") return;
+            setValue(el, "", 0);
+        };
+    }, [getTarget, setValue]);
+
+    useEffect(() => {
+        setGlobalHandlers({
             onEnd: () => navigate("/"),
             onBack: () => navigate(-1),
             onCall: () => fire("onOk"),
@@ -25,9 +145,15 @@ function Shell() {
             },
             onLeft: () => { },
             onRight: () => { },
+            onBackspace: () => backspace(),
+            onClear: () => clearAll(),
+            onDigit: (d) => insertText(String(d ?? "")),
+            onStar: () => insertText("*"),
+            onHash: () => insertText("#"),
         });
+
         setSoftKeys({ left: "Menu", center: "OK", right: "Back" });
-    }, [navigate, setHandlers, setSoftKeys, fire]);
+    }, [navigate, setGlobalHandlers, setSoftKeys, fire, backspace, clearAll, insertText]);
 
     const title =
         location.pathname === "/"
