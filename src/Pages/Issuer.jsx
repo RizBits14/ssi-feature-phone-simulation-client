@@ -41,7 +41,6 @@ export default function Issuer() {
             const data = await res.json();
             if (!res.ok) throw new Error(data?.error || "Failed to load connections");
             setConnections(data.items || []);
-            // auto-select first connected if none selected
             if (!selectedConnId) {
                 const connected = (data.items || []).find((x) => x.status === "connected");
                 if (connected?.connectionId) setSelectedConnId(connected.connectionId);
@@ -127,7 +126,6 @@ export default function Issuer() {
 
     return (
         <div className="p-3 text-slate-100">
-            {/* Actions */}
             <div className="text-[13px] font-semibold">Issuer</div>
             <div className="text-[11px] opacity-75 mt-1">
                 Step 1: Create Invitation → tell the code to Holder → then issue credential.
@@ -142,7 +140,6 @@ export default function Issuer() {
                 </button>
             </div>
 
-            {/* Invitation box */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
                 <div className="text-[12px] font-semibold">Invitation Number</div>
                 <textarea
@@ -160,7 +157,6 @@ export default function Issuer() {
                 </button>
             </div>
 
-            {/* Connection picker */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
                 <div className="text-[12px] font-semibold">Connected Connections</div>
 
@@ -181,7 +177,6 @@ export default function Issuer() {
                 )}
             </div>
 
-            {/* Claims */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
                 <div className="text-[12px] font-semibold">Credential Claims</div>
 

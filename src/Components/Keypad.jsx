@@ -7,12 +7,51 @@ function Key({ label, sub, onClick, className = "" }) {
             onClick={onClick}
             className={
                 "select-none rounded-xl border border-slate-700 bg-slate-900/60 active:bg-slate-800 " +
-                "h-14 flex flex-col items-center justify-center text-slate-100 " +
+                "h-12 flex flex-col items-center justify-center text-slate-100 " +
+                "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] " +
                 className
             }
         >
-            <div className="text-lg font-bold leading-none">{label}</div>
-            {sub ? <div className="text-[10px] opacity-70 leading-none mt-1">{sub}</div> : null}
+            <div className="text-[17px] font-bold leading-none">{label}</div>
+            {sub ? (
+                <div className="text-[10px] opacity-70 leading-none mt-1">{sub}</div>
+            ) : null}
+        </button>
+    );
+}
+
+function MiniKey({ label, onClick, className = "" }) {
+    return (
+        <button
+            onClick={onClick}
+            className={
+                "select-none rounded-xl border border-slate-700 bg-slate-900/50 active:bg-slate-800 " +
+                "h-9 flex items-center justify-center text-slate-100 " +
+                "text-[12px] font-semibold tracking-wide " +
+                "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] " +
+                className
+            }
+        >
+            {label}
+        </button>
+    );
+}
+
+function NavKey({ label, onClick, className = "" }) {
+    return (
+        <button
+            onClick={onClick}
+            className={
+                "select-none rounded-lg border border-slate-600 bg-slate-900/40 active:bg-slate-800/60 " +
+                "h-7 w-10 flex items-center justify-center text-slate-100 " +
+                "text-[11px] font-bold leading-none " +
+                "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] " +
+                className
+            }
+            aria-label={label}
+            title={label}
+        >
+            {label}
         </button>
     );
 }
@@ -28,12 +67,24 @@ export default function Keypad() {
             if (k === "ArrowDown") return fire("onDown");
             if (k === "ArrowLeft") return fire("onLeft");
             if (k === "ArrowRight") return fire("onRight");
+
             if (k === "Enter") return fire("onOk");
-            if (k === "Backspace" || k === "Escape") return fire("onBack");
+
+            if (k === "Backspace") {
+                e.preventDefault();
+                return fire("onBackspace");
+            }
+
+            if (k === "Delete") {
+                e.preventDefault();
+                return fire("onBackspace");
+            }
+
+            if (k === "Escape") return fire("onBack");
 
             if (/^[0-9]$/.test(k)) return fire("onDigit", k);
-            if (k === "*") return fire("onDigit", "*");
-            if (k === "#") return fire("onDigit", "#");
+            if (k === "*") return fire("onStar");
+            if (k === "#") return fire("onHash");
         };
 
         window.addEventListener("keydown", onKeyDown);
@@ -42,6 +93,33 @@ export default function Keypad() {
 
     return (
         <div className="px-3 pb-3">
+            <div className="mb-2 grid grid-cols-3 gap-2">
+                <MiniKey label="⌫ DEL" onClick={() => fire("onBackspace")} />
+                <MiniKey
+                    label="CLR"
+                    className="border-amber-700 bg-amber-900/20 active:bg-amber-800/30"
+                    onClick={() => fire("onClear")}
+                />
+
+                <div className="flex items-center justify-end">
+                    <div className="grid grid-cols-3 grid-rows-3 gap-1">
+                        <div />
+                        <NavKey label="▲" onClick={() => fire("onUp")} />
+                        <div />
+                        <NavKey label="◀" onClick={() => fire("onLeft")} />
+                        <NavKey
+                            label="OK"
+                            onClick={() => fire("onOk")}
+                            className="border-slate-500 bg-slate-800/60"
+                        />
+                        <NavKey label="▶" onClick={() => fire("onRight")} />
+                        <div />
+                        <NavKey label="▼" onClick={() => fire("onDown")} />
+                        <div />
+                    </div>
+                </div>
+            </div>
+
             <div className="grid grid-cols-3 gap-2">
                 <Key label="1" sub="" onClick={() => fire("onDigit", "1")} />
                 <Key label="2" sub="ABC" onClick={() => fire("onDigit", "2")} />
@@ -52,25 +130,22 @@ export default function Keypad() {
                 <Key label="7" sub="PQRS" onClick={() => fire("onDigit", "7")} />
                 <Key label="8" sub="TUV" onClick={() => fire("onDigit", "8")} />
                 <Key label="9" sub="WXYZ" onClick={() => fire("onDigit", "9")} />
-                <Key label="*" sub="" onClick={() => fire("onDigit", "*")} />
+                <Key label="*" sub="" onClick={() => fire("onStar")} />
                 <Key label="0" sub="+" onClick={() => fire("onDigit", "0")} />
-                <Key label="#" sub="" onClick={() => fire("onDigit", "#")} />
+                <Key label="#" sub="" onClick={() => fire("onHash")} />
 
                 <Key
                     label="CALL"
-                    sub=""
                     className="col-span-1 border-green-700 bg-green-900/30 active:bg-green-800/40"
                     onClick={() => fire("onCall")}
                 />
                 <Key
-                    label="OK"
-                    sub=""
-                    className="col-span-1 border-slate-500 bg-slate-800/50 active:bg-slate-700"
-                    onClick={() => fire("onOk")}
+                    label="BACK"
+                    className="col-span-1 border-slate-600 bg-slate-900/40 active:bg-slate-800/50"
+                    onClick={() => fire("onBack")}
                 />
                 <Key
                     label="END"
-                    sub=""
                     className="col-span-1 border-red-700 bg-red-900/30 active:bg-red-800/40"
                     onClick={() => fire("onEnd")}
                 />
@@ -78,3 +153,4 @@ export default function Keypad() {
         </div>
     );
 }
+

@@ -42,7 +42,6 @@ export default function Holder() {
             setCreds(items);
             setProofReqs(pr.items || []);
 
-            // auto select first accepted
             if (!selectedCredId) {
                 const accepted = items.find((x) => x.status === "accepted");
                 if (accepted?._id) setSelectedCredId(accepted._id);
@@ -157,7 +156,6 @@ export default function Holder() {
                 </div>
             ) : null}
 
-            {/* Offered */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
                 <div className="text-[12px] font-semibold">Offered Credentials</div>
                 {offered.length === 0 ? (
@@ -177,7 +175,6 @@ export default function Holder() {
                 )}
             </div>
 
-            {/* Accepted selector */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
                 <div className="text-[12px] font-semibold">Accepted Credential (for Proof)</div>
                 {accepted.length === 0 ? (
@@ -197,7 +194,6 @@ export default function Holder() {
                 )}
             </div>
 
-            {/* Proof Requests */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
                 <div className="text-[12px] font-semibold">Proof Requests</div>
                 {requestedProofs.length === 0 ? (
