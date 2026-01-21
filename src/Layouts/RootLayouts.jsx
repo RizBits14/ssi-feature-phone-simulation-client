@@ -1,4 +1,3 @@
-// rootlayout.jsx
 import React, { useEffect, useMemo, useRef } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Navbar from "../Components/Navbar";
