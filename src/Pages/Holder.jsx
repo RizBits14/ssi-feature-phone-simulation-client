@@ -61,7 +61,7 @@ export default function Holder() {
             const res = await fetch(`${API}/api/holder/receive-invitation`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ invitationUrl: inv.trim() }),
+                body: JSON.stringify({ inviteCode: inv.trim() }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data?.error || "Failed");
@@ -74,6 +74,7 @@ export default function Holder() {
             setBusy(false);
         }
     }
+
 
     async function acceptCredential(credentialId) {
         setBusy(true);
@@ -132,12 +133,12 @@ export default function Holder() {
     return (
         <div className="p-3 text-slate-100">
             <div className="text-[13px] font-semibold">Holder</div>
-            <div className="text-[11px] opacity-75 mt-1">Paste invitation from Issuer → Connect → Accept credential → Present proof.</div>
+            <div className="text-[11px] opacity-75 mt-1">Enter code from Issuer → Connect → Accept credential → Present proof.</div>
 
             <textarea
                 value={inv}
                 onChange={(e) => setInv(e.target.value)}
-                placeholder="Paste sim://oob/... invitationUrl here…"
+                placeholder="Enter invitation code (e.g. 48392)"
                 className="mt-2 w-full h-24 text-[12px] p-2 rounded-xl bg-slate-900/60 border border-slate-700 outline-none"
             />
 

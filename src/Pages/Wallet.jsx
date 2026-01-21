@@ -42,9 +42,30 @@ export default function Wallet() {
                     <div className="px-3 py-3 text-[12px] opacity-70">No credentials yet.</div>
                 ) : (
                     rows.map((c) => (
-                        <div key={c._id} className="px-3 py-2 text-[12px] bg-slate-900/40 border-b border-slate-800 last:border-b-0">
+                        <div
+                            key={c._id}
+                            className="px-3 py-2 text-[12px] bg-slate-900/40 border-b border-slate-800 last:border-b-0"
+                        >
                             <div className="font-semibold">{c.type}</div>
                             <div className="opacity-80">status: {c.status}</div>
+                            <div className="opacity-70 text-[11px] mt-1">
+                                id: {String(c._id).slice(0, 12)}…
+                            </div>
+
+                            {c.claims ? (
+                                <div className="mt-2 space-y-1 text-[11px]">
+                                    {Object.entries(c.claims).map(([key, value]) => (
+                                        <div key={key} className="flex justify-between">
+                                            <span className="opacity-75">{key}</span>
+                                            <span className="font-medium">{String(value)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : null}
+
+                            <div className="mt-2 text-[11px] opacity-60">
+                                issued: {new Date(c.createdAt).toLocaleString()}
+                            </div>
                         </div>
                     ))
                 )}

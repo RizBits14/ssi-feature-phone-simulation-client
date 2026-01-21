@@ -17,7 +17,7 @@ export default function Issuer() {
     const [busy, setBusy] = useState(false);
     const [msg, setMsg] = useState("");
 
-    const [invitationUrl, setInvitationUrl] = useState("");
+    const [inviteCode, setInviteCode] = useState("");
 
     const [connections, setConnections] = useState([]);
     const [selectedConnId, setSelectedConnId] = useState("");
@@ -64,8 +64,8 @@ export default function Issuer() {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data?.error || "Create invitation failed");
-            setInvitationUrl(data.invitationUrl);
-            setMsg("Invitation created ✓\nNow copy it and paste into Holder.");
+            setInviteCode(data.inviteCode);
+            setMsg("Invitation code created ✓\nTell the holder to enter this number.");
             await refreshConnections();
         } catch (e) {
             setMsg(`Error: ${e.message}`);
@@ -76,7 +76,7 @@ export default function Issuer() {
 
     async function copyInvitation() {
         try {
-            await navigator.clipboard.writeText(invitationUrl);
+            await navigator.clipboard.writeText(inviteCode);
             setMsg("Copied ✓");
         } catch {
             setMsg("Copy not allowed.\nManually select and copy the text.");
@@ -130,7 +130,7 @@ export default function Issuer() {
             {/* Actions */}
             <div className="text-[13px] font-semibold">Issuer</div>
             <div className="text-[11px] opacity-75 mt-1">
-                Step 1: Create Invitation → paste into Holder → then issue credential.
+                Step 1: Create Invitation → tell the code to Holder → then issue credential.
             </div>
 
             <div className="mt-2 grid grid-cols-2 gap-2">
@@ -144,16 +144,16 @@ export default function Issuer() {
 
             {/* Invitation box */}
             <div className="mt-2 rounded-xl border border-slate-700 bg-slate-900/40 p-2">
-                <div className="text-[12px] font-semibold">Invitation URL</div>
+                <div className="text-[12px] font-semibold">Invitation Number</div>
                 <textarea
-                    value={invitationUrl}
+                    value={inviteCode}
                     readOnly
                     className="mt-1 w-full h-20 text-[11px] p-2 rounded-lg bg-slate-950/50 border border-slate-700"
                     placeholder="Create invitation to generate..."
                 />
                 <button
                     className={smallBtn("mt-2")}
-                    disabled={!invitationUrl}
+                    disabled={!inviteCode}
                     onClick={copyInvitation}
                 >
                     Copy Invitation

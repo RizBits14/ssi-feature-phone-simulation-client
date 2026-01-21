@@ -16,7 +16,7 @@ This simulaction demonstrates the Self-Sovereign Identity (SSI) Trust Triangle b
 
 - Go to **Issuer**
 - Press **Create Invitation**
-- An Invitation URL is Generated
+- An Invitation Number is Generated
 - Press **Copy Invitation**
 
 Output to expect
