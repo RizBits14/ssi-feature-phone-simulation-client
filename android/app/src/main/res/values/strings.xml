@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ssi-feature-phone-simulation</string>
+    <string name="title_activity_main">ssi-feature-phone-simulation</string>
+    <string name="package_name">com.rizwanul.ssi</string>
+    <string name="custom_url_scheme">com.rizwanul.ssi</string>
+</resources>

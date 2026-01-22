@@ -12,17 +12,18 @@ This simulaction demonstrates the Self-Sovereign Identity (SSI) Trust Triangle b
 
 # Step By Step Simulation
 
+## THE USSD FOR THE SIMULATION IS *567#
+
 ## 1) (Issuer → Creates Invitation)
 
 - Go to **Issuer**
 - Press **Create Invitation**
 - An Invitation Number is Generated
-- Press **Copy Invitation**
+- **(Memeber the Invitation Number that has been generated)**
 
 Output to expect
 
 - **"Invitation Created ✓"**
-- A long invitation string / URL
 
 ```bash
 Meaning:
@@ -36,7 +37,7 @@ The Issuer is inviting a Holder to establish a secure connection.
 ## 2) (Holder → Connects to Issuer)
 
 - Go to **Holder**
-- Paste the copied invitation into the input box
+- Write the Invitation Number to the field box
 - Press **OK (Connect)**
 
 Output to expect
@@ -170,6 +171,48 @@ What This Simulation Demonstrates:
     - The Verifier validates proofs without contracting the Issuer every time
 
 ```
+
+**User can see what credentials they are holding in 4. Wallet**
+
+## Technology Stack
+
+### Frontend / UI
+
+- React
+- React DOM
+- React Router
+- React Icons
+
+### Styling
+
+- TailwindCSS
+- DaisyUI
+
+### HTTP / Data Fetching
+
+- Axios
+
+### Build & Development Tools
+
+- Vite
+- @vitejs/plugin-react
+- ESLint 
+- @eslint/js 
+- eslint-plugin-react-hooks 
+- eslint-plugin-react-refresh
+
+### TypeScript / Type Support
+
+- @types/react 
+- @types/react-dom 
+- globals
+
+### Mobile / Native Integration
+
+- Capacitor 8.0
+    - @capacitor/core 
+    - @capacitor/cli
+    - @capacitor/android
 
 ## Conclusion
 
