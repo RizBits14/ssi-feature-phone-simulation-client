@@ -164,7 +164,9 @@ export default function Holder() {
                     <div className="mt-2 space-y-2">
                         {offered.map((c) => (
                             <div key={c._id} className="rounded-lg border border-slate-700 bg-slate-950/40 p-2">
-                                <div className="text-[12px] font-semibold">{c.type}</div>
+                                <div className="text-[12px] font-semibold">
+                                    {c.claims?.department || "Credential"}
+                                </div>
                                 <div className="text-[11px] opacity-80">status: {c.status}</div>
                                 <button className={btn("mt-2")} disabled={busy} onClick={() => acceptCredential(c._id)}>
                                     Accept
@@ -187,7 +189,7 @@ export default function Holder() {
                     >
                         {accepted.map((c) => (
                             <option key={c._id} value={c._id}>
-                                {c.type} ({String(c._id).slice(0, 6)}…)
+                                {(c.claims?.department || "Credential")} ({String(c._id).slice(0, 6)}…)
                             </option>
                         ))}
                     </select>

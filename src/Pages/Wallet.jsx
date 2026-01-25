@@ -26,6 +26,12 @@ export default function Wallet() {
         load();
     }, []);
 
+    function pickClaim(claims, key) {
+        if (!claims) return "";
+        const v = claims[key];
+        return v === undefined || v === null ? "" : String(v);
+    }
+
     return (
         <div className="p-3 text-slate-100">
             <div className="flex items-center justify-between">
@@ -41,33 +47,41 @@ export default function Wallet() {
                 {rows.length === 0 ? (
                     <div className="px-3 py-3 text-[12px] opacity-70">No credentials yet.</div>
                 ) : (
-                    rows.map((c) => (
-                        <div
-                            key={c._id}
-                            className="px-3 py-2 text-[12px] bg-slate-900/40 border-b border-slate-800 last:border-b-0"
-                        >
-                            <div className="font-semibold">{c.type}</div>
-                            <div className="opacity-80">status: {c.status}</div>
-                            <div className="opacity-70 text-[11px] mt-1">
-                                id: {String(c._id).slice(0, 12)}…
-                            </div>
+                    rows.map((c) => {
+                        const credType = (c?.claims?.department || "Credential").toString();
+                        const name = pickClaim(c.claims, "name");
+                        const age = pickClaim(c.claims, "age");
+                        const mobile = pickClaim(c.claims, "email");
 
-                            {c.claims ? (
+                        return (
+                            <div
+                                key={c._id}
+                                className="px-3 py-2 text-[12px] bg-slate-900/40 border-b border-slate-800 last:border-b-0"
+                            >
+                                <div className="font-semibold">{credType}</div>
+                                <div className="opacity-80">status: {c.status}</div>
+
                                 <div className="mt-2 space-y-1 text-[11px]">
-                                    {Object.entries(c.claims).map(([key, value]) => (
-                                        <div key={key} className="flex justify-between">
-                                            <span className="opacity-75">{key}</span>
-                                            <span className="font-medium">{String(value)}</span>
-                                        </div>
-                                    ))}
+                                    <div className="flex justify-between">
+                                        <span className="opacity-75">Name</span>
+                                        <span className="font-medium">{name || "-"}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="opacity-75">Numerics</span>
+                                        <span className="font-medium">{age || "-"}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="opacity-75">Mobile</span>
+                                        <span className="font-medium">{mobile || "-"}</span>
+                                    </div>
                                 </div>
-                            ) : null}
 
-                            <div className="mt-2 text-[11px] opacity-60">
-                                issued: {new Date(c.createdAt).toLocaleString()}
+                                <div className="mt-2 text-[11px] opacity-60">
+                                    issued: {c.createdAt ? new Date(c.createdAt).toLocaleString() : "-"}
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
         </div>

@@ -23,10 +23,10 @@ export default function Issuer() {
     const [selectedConnId, setSelectedConnId] = useState("");
 
     const [claims, setClaims] = useState({
-        name: "John Doe",
-        age: 25,
-        email: "john@example.com",
-        department: "Computer Science",
+        name: "",
+        age: '',
+        email: "+880",
+        department: "",
     });
 
     useEffect(() => {
@@ -98,7 +98,7 @@ export default function Issuer() {
                     connectionId: selectedConnId,
                     claims: {
                         name: claims.name,
-                        age: Number(claims.age),
+                        age: claims.age,
                         email: claims.email,
                         department: claims.department,
                     },
@@ -191,20 +191,20 @@ export default function Issuer() {
                         value={claims.age}
                         onChange={(e) => setClaims((s) => ({ ...s, age: e.target.value }))}
                         className="text-[12px] p-2 rounded-lg bg-slate-950/50 border border-slate-700"
-                        placeholder="Age"
-                        inputMode="numeric"
+                        placeholder="Numerics"
+                        // inputMode="numeric"
                     />
                     <input
                         value={claims.email}
                         onChange={(e) => setClaims((s) => ({ ...s, email: e.target.value }))}
                         className="col-span-2 text-[12px] p-2 rounded-lg bg-slate-950/50 border border-slate-700"
-                        placeholder="Email"
+                        placeholder="Mobile Number"
                     />
                     <input
                         value={claims.department}
                         onChange={(e) => setClaims((s) => ({ ...s, department: e.target.value }))}
                         className="col-span-2 text-[12px] p-2 rounded-lg bg-slate-950/50 border border-slate-700"
-                        placeholder="Department"
+                        placeholder="Type"
                     />
                 </div>
 

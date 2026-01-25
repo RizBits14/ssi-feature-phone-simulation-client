@@ -283,12 +283,9 @@ export default function Verifier() {
                         <div className="text-[12px] font-semibold wrap-break-word">{view.name || "—"}</div>
                     </div>
                     <div className="rounded-lg border border-slate-700 bg-slate-950/40 p-2">
-                        <div className="text-[10px] opacity-70">Age</div>
+                        <div className="text-[10px] opacity-70">Numerics</div>
                         <div className="text-[12px] font-semibold">{view.age || "—"}</div>
                     </div>
-                </div>
-                <div className="mt-2 text-[10px] opacity-70">
-                    Email and Department are intentionally hidden from the Verifier in this simulation.
                 </div>
             </div>
 
