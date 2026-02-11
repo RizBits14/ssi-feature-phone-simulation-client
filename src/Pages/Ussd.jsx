@@ -6,6 +6,7 @@ export default function Ussd({ onSubmit, error }) {
     const [input, setInput] = useState("");
     const inputRef = useRef(input);
     const onSubmitRef = useRef(onSubmit);
+
     useEffect(() => {
         inputRef.current = input;
     }, [input]);
@@ -13,6 +14,7 @@ export default function Ussd({ onSubmit, error }) {
     useEffect(() => {
         onSubmitRef.current = onSubmit;
     }, [onSubmit]);
+
     useEffect(() => {
         setSoftKeys({ left: "Clear", center: "OK", right: "Back" });
 
@@ -37,24 +39,34 @@ export default function Ussd({ onSubmit, error }) {
     }, [setHandlers, setSoftKeys]);
 
     return (
-        <div className="p-3 text-slate-100">
-            <div className="text-[13px] font-semibold">USSD</div>
-            <div className="text-[11px] opacity-75 mt-1">
-                Use the phone keypad to type the USSD code.
+        <div className="p-3">
+            <div className="text-[13px] font-semibold" style={{ color: "var(--text)" }}>
+                USSD Login
+            </div>
+            <div className="text-[11px] mt-1" style={{ color: "var(--muted)" }}>
+                Type the USSD code using keypad.
             </div>
 
-            <div className="mt-3 rounded-xl border border-slate-700 bg-slate-950/40 p-3">
-                <div className="text-[10px] opacity-70">Dial</div>
-                <div className="mt-1 text-[16px] font-mono tracking-widest break-all">
+            <div
+                className="mt-3 rounded-2xl border p-3"
+                style={{ borderColor: "var(--line)", background: "rgba(255,255,255,0.85)" }}
+            >
+                <div className="text-[10px] font-semibold" style={{ color: "var(--muted)" }}>
+                    Dial
+                </div>
+                <div className="mt-1 text-[16px] font-mono tracking-widest break-all" style={{ color: "var(--text)" }}>
                     {input || "____"}
                 </div>
             </div>
 
-            <div className="mt-3 text-[11px] opacity-70">
-                ⌫ deletes • OK submits • Clear wipes
-            </div>
-
-            {error ? <div className="mt-2 text-[11px] text-red-400">{error}</div> : null}
+            {error ? (
+                <div
+                    className="mt-2 text-[11px] rounded-xl border px-2 py-2"
+                    style={{ borderColor: "rgba(251,113,133,0.45)", background: "var(--bad-weak)", color: "var(--text)" }}
+                >
+                    {error}
+                </div>
+            ) : null}
         </div>
     );
 }
