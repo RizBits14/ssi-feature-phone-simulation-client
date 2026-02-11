@@ -1,27 +1,6 @@
 import React, { useEffect } from "react";
 import { usePhone } from "../Phone/PhoneContext";
 
-function isEditable(el) {
-    if (!el || typeof el !== "object") return false;
-    const tag = el.tagName;
-    if (tag === "TEXTAREA") return !el.readOnly && !el.disabled;
-    if (tag === "INPUT") {
-        const type = String(el.getAttribute?.("type") || "text").toLowerCase();
-        const ok =
-            type === "text" ||
-            type === "tel" ||
-            type === "search" ||
-            type === "password" ||
-            type === "email" ||
-            type === "url" ||
-            type === "number" ||
-            type === "" ||
-            type == null;
-        return ok && !el.readOnly && !el.disabled;
-    }
-    return !!el.isContentEditable;
-}
-
 function Key({ label, sub, onClick, className = "" }) {
     const prevent = (e) => e.preventDefault();
     return (
@@ -31,20 +10,40 @@ function Key({ label, sub, onClick, className = "" }) {
             onMouseDown={prevent}
             onClick={onClick}
             className={
-                "select-none rounded-xl border border-slate-700 bg-slate-900/60 active:bg-slate-800 " +
-                "h-12 flex flex-col items-center justify-center text-slate-100 " +
-                "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] " +
+                "select-none rounded-2xl border h-12 flex flex-col items-center justify-center " +
+                "text-[15px] font-bold leading-none " +
+                "shadow-[0_10px_18px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.8)] " +
+                "active:translate-y-px " +
                 className
             }
+            style={{
+                background: "var(--key)",
+                borderColor: "var(--key-edge)",
+                color: "var(--text)",
+            }}
         >
-            <div className="text-[17px] font-bold leading-none">{label}</div>
-            {sub ? <div className="text-[10px] opacity-70 leading-none mt-1">{sub}</div> : null}
+            <div>{label}</div>
+            {sub ? (
+                <div className="text-[10px] font-semibold mt-1" style={{ color: "var(--muted)" }}>
+                    {sub}
+                </div>
+            ) : null}
         </button>
     );
 }
 
-function MiniKey({ label, onClick, className = "" }) {
+function MiniKey({ label, onClick, className = "", tone = "normal" }) {
     const prevent = (e) => e.preventDefault();
+    const bg =
+        tone === "warn"
+            ? "linear-gradient(180deg, #fff7ed, #fffbeb)"
+            : tone === "danger"
+                ? "linear-gradient(180deg, #fff1f2, #ffe4e6)"
+                : "linear-gradient(180deg, #ffffff, #f8fafc)";
+
+    const border =
+        tone === "warn" ? "rgba(245,158,11,0.35)" : tone === "danger" ? "rgba(251,113,133,0.35)" : "var(--line)";
+
     return (
         <button
             type="button"
@@ -52,12 +51,13 @@ function MiniKey({ label, onClick, className = "" }) {
             onMouseDown={prevent}
             onClick={onClick}
             className={
-                "select-none rounded-xl border border-slate-700 bg-slate-900/50 active:bg-slate-800 " +
-                "h-9 flex items-center justify-center text-slate-100 " +
+                "select-none rounded-2xl border h-9 flex items-center justify-center " +
                 "text-[12px] font-semibold tracking-wide " +
-                "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] " +
+                "shadow-[0_10px_18px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] " +
+                "active:translate-y-px " +
                 className
             }
+            style={{ background: bg, borderColor: border, color: "var(--text)" }}
         >
             {label}
         </button>
@@ -73,12 +73,17 @@ function NavKey({ label, onClick, className = "" }) {
             onMouseDown={prevent}
             onClick={onClick}
             className={
-                "select-none rounded-lg border border-slate-600 bg-slate-900/40 active:bg-slate-800/60 " +
-                "h-7 w-10 flex items-center justify-center text-slate-100 " +
-                "text-[11px] font-bold leading-none " +
-                "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] " +
+                "select-none rounded-xl border h-8 w-10 flex items-center justify-center " +
+                "text-[11px] font-bold " +
+                "shadow-[0_10px_18px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] " +
+                "active:translate-y-px " +
                 className
             }
+            style={{
+                background: "linear-gradient(180deg, #ffffff, #f8fafc)",
+                borderColor: "var(--line)",
+                color: "var(--text)",
+            }}
             aria-label={label}
             title={label}
         >
@@ -93,7 +98,6 @@ export default function Keypad() {
     useEffect(() => {
         const onKeyDown = (e) => {
             const k = e.key;
-            const editing = isEditable(document.activeElement);
 
             if (k === "ArrowUp") {
                 e.preventDefault();
@@ -111,32 +115,22 @@ export default function Keypad() {
                 e.preventDefault();
                 return fire("onRight");
             }
-
             if (k === "Enter") {
                 e.preventDefault();
                 return fire("onOk");
             }
-
-            if (k === "Backspace") {
+            if (k === "Backspace" || k === "Delete") {
                 e.preventDefault();
                 return fire("onBackspace");
             }
-
-            if (k === "Delete") {
-                e.preventDefault();
-                return fire("onBackspace");
-            }
-
             if (k === "Escape") {
                 e.preventDefault();
                 return fire("onBack");
             }
 
-            if (!editing) {
-                if (/^[0-9]$/.test(k)) return fire("onDigit", k);
-                if (k === "*") return fire("onStar");
-                if (k === "#") return fire("onHash");
-            }
+            if (/^[0-9]$/.test(k)) return fire("onDigit", k);
+            if (k === "*") return fire("onStar");
+            if (k === "#") return fire("onHash");
         };
 
         window.addEventListener("keydown", onKeyDown);
@@ -144,14 +138,10 @@ export default function Keypad() {
     }, [fire]);
 
     return (
-        <div className="px-3 pb-3">
+        <div className="px-3 pb-4">
             <div className="mb-2 grid grid-cols-3 gap-2">
                 <MiniKey label="⌫ DEL" onClick={() => fire("onBackspace")} />
-                <MiniKey
-                    label="CLR"
-                    className="border-amber-700 bg-amber-900/20 active:bg-amber-800/30"
-                    onClick={() => fire("onClear")}
-                />
+                <MiniKey label="CLR" tone="warn" onClick={() => fire("onClear")} />
 
                 <div className="flex items-center justify-end">
                     <div className="grid grid-cols-3 grid-rows-3 gap-1">
@@ -159,7 +149,16 @@ export default function Keypad() {
                         <NavKey label="▲" onClick={() => fire("onUp")} />
                         <div />
                         <NavKey label="◀" onClick={() => fire("onLeft")} />
-                        <NavKey label="OK" onClick={() => fire("onOk")} className="border-slate-500 bg-slate-800/60" />
+                        <NavKey
+                            label="OK"
+                            onClick={() => fire("onOk")}
+                            className="border"
+                            style={{
+                                background: "linear-gradient(180deg, var(--accent-weak), #ffffff)",
+                                borderColor: "rgba(14,165,233,0.45)",
+                                color: "var(--text)",
+                            }}
+                        />
                         <NavKey label="▶" onClick={() => fire("onRight")} />
                         <div />
                         <NavKey label="▼" onClick={() => fire("onDown")} />
@@ -182,21 +181,44 @@ export default function Keypad() {
                 <Key label="0" sub="+" onClick={() => fire("onDigit", "0")} />
                 <Key label="#" sub="" onClick={() => fire("onHash")} />
 
-                <Key
-                    label="CALL"
-                    className="col-span-1 border-green-700 bg-green-900/30 active:bg-green-800/40"
+                <button
+                    type="button"
                     onClick={() => fire("onCall")}
-                />
-                <Key
-                    label="BACK"
-                    className="col-span-1 border-slate-600 bg-slate-900/40 active:bg-slate-800/50"
+                    className="col-span-1 rounded-2xl border h-12 font-bold shadow-[0_12px_20px_rgba(15,23,42,0.10)] active:translate-y-px"
+                    style={{
+                        background: "linear-gradient(180deg, var(--good-weak), #ffffff)",
+                        borderColor: "rgba(16,185,129,0.40)",
+                        color: "var(--text)",
+                    }}
+                >
+                    CALL
+                </button>
+
+                <button
+                    type="button"
                     onClick={() => fire("onBack")}
-                />
-                <Key
-                    label="END"
-                    className="col-span-1 border-red-700 bg-red-900/30 active:bg-red-800/40"
+                    className="col-span-1 rounded-2xl border h-12 font-bold shadow-[0_12px_20px_rgba(15,23,42,0.10)] active:translate-y-px"
+                    style={{
+                        background: "linear-gradient(180deg, #ffffff, #f8fafc)",
+                        borderColor: "var(--line)",
+                        color: "var(--text)",
+                    }}
+                >
+                    BACK
+                </button>
+
+                <button
+                    type="button"
                     onClick={() => fire("onEnd")}
-                />
+                    className="col-span-1 rounded-2xl border h-12 font-bold shadow-[0_12px_20px_rgba(15,23,42,0.10)] active:translate-y-px"
+                    style={{
+                        background: "linear-gradient(180deg, var(--bad-weak), #ffffff)",
+                        borderColor: "rgba(251,113,133,0.45)",
+                        color: "var(--text)",
+                    }}
+                >
+                    END
+                </button>
             </div>
         </div>
     );
