@@ -3,11 +3,35 @@ import { useNavigate } from "react-router";
 import { usePhone } from "../Phone/PhoneContext";
 
 const ITEMS = [
-    { label: "1. Holder", path: "/holder" },
-    { label: "2. Issuer", path: "/issuer" },
-    { label: "3. Verifier", path: "/verifier" },
-    { label: "4. Wallet", path: "/wallet" },
+    { label: "1. Holder", path: "/holder", tone: "accent" },
+    { label: "2. Wallet", path: "/wallet", tone: "good" },
 ];
+
+function Row({ active, text, tone }) {
+    const bg =
+        active && tone === "good"
+            ? "linear-gradient(90deg, var(--good-weak), rgba(16,185,129,0.0))"
+            : active
+                ? "linear-gradient(90deg, var(--accent-weak), rgba(14,165,233,0.0))"
+                : "transparent";
+
+    const left =
+        active && tone === "good" ? "rgba(16,185,129,0.65)" : active ? "rgba(14,165,233,0.65)" : "transparent";
+
+    return (
+        <div
+            className="px-3 py-2 text-[13px] border-b last:border-b-0"
+            style={{
+                background: bg,
+                borderColor: "var(--line)",
+                borderLeft: active ? `4px solid ${left}` : "4px solid transparent",
+                color: "var(--text)",
+            }}
+        >
+            {text}
+        </div>
+    );
+}
 
 export default function HomeMenu() {
     const [idx, setIdx] = useState(0);
@@ -23,33 +47,29 @@ export default function HomeMenu() {
             onOk: () => nav(ITEMS[idx].path),
             onDigit: (d) => {
                 const n = parseInt(d, 10);
-                if (!Number.isNaN(n) && n >= 1 && n <= ITEMS.length) {
-                    nav(ITEMS[n - 1].path);
-                }
+                if (!Number.isNaN(n) && n >= 1 && n <= ITEMS.length) nav(ITEMS[n - 1].path);
             },
+            onBack: () => nav("/"),
         });
     }, [idx, nav, setHandlers, setSoftKeys]);
 
     return (
-        <div className="p-3 text-slate-100">
-            <div className="text-[12px] opacity-80 mb-2">Press 1–4</div>
+        <div className="p-3">
+            <div className="text-[12px] font-semibold" style={{ color: "var(--text)" }}>
+                Welcome
+            </div>
+            <div className="text-[11px] mt-1" style={{ color: "var(--muted)" }}>
+                Use ▲▼ to move • OK to open • press 1–2 to jump
+            </div>
 
-            <div className="rounded-xl border border-slate-700 overflow-hidden">
+            <div className="mt-3 rounded-2xl border overflow-hidden font-semibold" style={{ borderColor: "var(--line)" }}>
                 {ITEMS.map((it, i) => (
-                    <div
-                        key={it.label}
-                        className={
-                            "px-3 py-2 text-[13px] " +
-                            (i === idx ? "bg-green-600/20 border-l-4 border-green-400" : "bg-slate-900/40")
-                        }
-                    >
-                        {it.label}
-                    </div>
+                    <Row key={it.label} active={i === idx} text={it.label} tone={it.tone} />
                 ))}
             </div>
 
-            <div className="mt-3 text-[11px] opacity-70">
-                Tip: Press END to come back Home anytime.
+            <div className="mt-3 text-[11px]" style={{ color: "var(--muted)" }}>
+                Tip: Press END to return Home anytime.
             </div>
         </div>
     );
