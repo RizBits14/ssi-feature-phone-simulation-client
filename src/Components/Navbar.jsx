@@ -21,14 +21,20 @@ export default function Navbar({ title = "SSI SIM" }) {
 
     return (
         <div className="w-full px-3 pt-2">
-            <div className="flex items-center justify-between text-[11px] text-slate-200">
+            <div className="flex items-center justify-between text-[11px]" style={{ color: "var(--muted)" }}>
                 <div className="flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-400" title="Signal" />
-                    <span className="opacity-90">4G</span>
+                    <span
+                        className="inline-block w-2 h-2 rounded-full"
+                        style={{ background: "var(--good)" }}
+                        title="Signal"
+                    />
+                    <span className="opacity-90 text-black font-bold">4G</span>
                     <FiWifi className="opacity-80" />
                 </div>
 
-                <div className="font-semibold tracking-wide">{timeStr}</div>
+                <div className="font-bold tracking-wide text-black" style={{ color: "var(--text)" }}>
+                    {timeStr}
+                </div>
 
                 <div className="flex items-center gap-2">
                     <span className="text-[10px] opacity-80">86%</span>
@@ -36,8 +42,16 @@ export default function Navbar({ title = "SSI SIM" }) {
                 </div>
             </div>
 
-            <div className="mt-1 rounded-md bg-slate-900/70 border border-slate-700 px-2 py-1">
-                <div className="text-[12px] text-slate-100 font-semibold truncate">{title}</div>
+            <div
+                className="mt-2 rounded-xl border px-3 py-2"
+                style={{
+                    background: "var(--screen-bg)",
+                    borderColor: "var(--line)",
+                }}
+            >
+                <div className="text-[12px] font-semibold truncate" style={{ color: "var(--text)" }}>
+                    {title}
+                </div>
             </div>
         </div>
     );
